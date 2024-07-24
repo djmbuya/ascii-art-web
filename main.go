@@ -1,63 +1,25 @@
 package main
 
 import (
-    "fmt"
-    "html/template"
-    "net/http"
+	// a "ascii/ascii_art"
+	"fmt"
+	"log"
+	"net/http"
+
+	//"html/template"
+	"ascii/handlers"
 )
 
-// AsciiArt represents the ASCII art data
-type AsciiArt struct {
-    Text string
-	Banner string
-}
-
+// main starts the HTTP server.
 func main() {
-    // Define the routes and their corresponding handlers
-    http.HandleFunc("/", indexHandler)
-    http.HandleFunc("/ascii", asciiHandler)
-    http.HandleFunc("/submit", submitHandler)
+	fmt.Println("Server is starting...")
+	http.HandleFunc("/", handlers.Handler)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-    fmt.Println("Starting server on http://localhost:8080")
-    http.ListenAndServe(":8080", nil)
-}
-
-// indexHandler handles the root URL and renders the HTML template
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-    // Create a new AsciiArt instance
-    art := &AsciiArt{}
-
-    // Parse and execute the HTML template
-    tmpl, _ := template.ParseFiles("index.html")
-    tmpl.Execute(w, art)
-}
-
-// asciiHandler handles the "/ascii" URL and retrieves the ASCII art
-func asciiHandler(w http.ResponseWriter, r *http.Request) {
-    // Get the ASCII art text from the request
-    text := r.FormValue("text")
-
-    // Create a new AsciiArt instance with the retrieved text
-    art := &AsciiArt{
-        Text: text,
-    }
-
-    // Parse and execute the HTML template
-    tmpl, _ := template.ParseFiles("index.html")
-    tmpl.Execute(w, art)
-}
-
-// submitHandler handles the "/submit" URL and processes the form submission
-func submitHandler(w http.ResponseWriter, r *http.Request) {
-    // Get the ASCII art text from the form
-    text := r.FormValue("text")
-	banner := r.FormValue("banner")
-
-    // Create a new AsciiArt instance with the submitted text
-    art := &AsciiArt{
-        Text: text,
-    }
-art = ascii.PrintAscii(text, banner)
-    // Redirect the user to the "/ascii" URL with the ASCII art data
-    http.Redirect(w, r, "/ascii?text="+text, http.StatusSeeOther)
+	fmt.Println("Server up at port 8080\nhttp status :", http.StatusOK)
+	// Openbrowser("http.localhost:8080")
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
 }

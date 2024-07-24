@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ascii-art-web</title>
+    <link rel="stylesheet" href="static/mystyle.css" type="text/css" />
+</head>
+    <body>
+        <h1>ascii-art-web</h1>
+        <main>
+            <div   class="container">
+            <form action="/" class="input-area" method="POST">
+               <textarea name="input" cols="50" rows="8"></textarea>
+            <br> <br>
+            <h4>Select fileName</h4>
+                <select name="font" class="cursor">.html
+                    <option value="standard">Standard</option>
+                    <option value="thinkertoy">Thinkertoy</option>
+                    <option value="shadow">Shadow</option>
+                </select>
+                <br> <br>
+                <input type="submit" value="Submit" class="button">
+            </form>
+
+            <article class="form-output">
+                <section class="out">
+                    <pre class="output">{{.Out}}</pre>
+                </section>
+            </article>
+             <br><br>
+            <footer class="footer">
+            </footer>
+            </main>
+        </div>
+    </body>
+</html>
