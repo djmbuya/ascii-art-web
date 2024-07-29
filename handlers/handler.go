@@ -1,17 +1,18 @@
 package handlers
 
-
 import (
+	"html/template"
+	"log"
+	"net/http"
+
 	a "ascii/ascii_art"
-     "net/http"
-	 "html/template"
-	 "log"
 )
 
 type ExecOutput struct {
 	In  string
 	Out string
 }
+
 func ValidAscii(s string) bool {
 	for _, i := range []byte(s) {
 		if i > 127 {
@@ -20,10 +21,20 @@ func ValidAscii(s string) bool {
 	}
 	return true
 }
+
 // Handler handles the HTTP requests.
 // Handler handles the HTTP requests.
 func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
+		if r.URL.Path != "/" {
+			w.WriteHeader(http.StatusNotFound)
+			t, err := template.ParseFiles("error/404.html")
+			if err != nil {
+				internalServerError(w)
+				return
+			}
+			t.Execute(w, nil)
+		}
 		switch r.Method {
 		case "GET":
 			t, err := template.ParseFiles("index.html")
@@ -51,6 +62,13 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				file, status := a.FindFile(input, font)
 				if status == 500 {
+					w.WriteHeader(http.StatusInternalServerError)
+					t, err := template.ParseFiles("error/500.html")
+					if err != nil {
+						internalServerError(w)
+						return
+					}
+					t.Execute(w, nil)
 					internalServerError(w)
 					return
 				}
@@ -83,7 +101,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		t.Execute(w, nil)
 	}
 }
-
 
 func internalServerError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
